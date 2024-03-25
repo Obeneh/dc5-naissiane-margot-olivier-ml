@@ -5,16 +5,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.decomposition import PCA
 
-
-data = pd.read_csv('insurance.csv')
-
+data = pd.read_csv('dataset_clients.csv',sep=';')
 # 2. Prétraitement des données
 
 # Conversion des variables catégorielles en variables numériques avec le codage à chaud (one-hot encoding)
 encoder = OneHotEncoder(drop='first')  # drop='first' pour éviter la multi-collinéarité
-categorical_features = ['sex', 'smoker', 'region']
+categorical_features = ['Revenu_Annuel', 'Age']
+
 encoded_features = encoder.fit_transform(data[categorical_features]).toarray()
+
 encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(categorical_features))
 
 # Fusion des données encodées avec le dataset original
@@ -33,12 +34,17 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
+# Réduction de dimensionnalité avec PCA
+pca = PCA(n_components=2)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+
 # 3. Entraînement du modèle de régression linéaire
 model = LinearRegression()
 model.fit(X_train, y_train)
 
 # 4. Prédiction et évaluation du modèle
-y_pred = model.predict(X_test)
+y_pred = model.predict(X_test_pca)
 mse = mean_squared_error(y_test, y_pred)
 print(f"Erreur quadratique moyenne (MSE) : {mse}")
 

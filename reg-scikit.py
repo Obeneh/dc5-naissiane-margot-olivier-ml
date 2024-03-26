@@ -12,7 +12,7 @@ data = pd.read_csv('dataset_clients.csv',sep=';')
 
 # Conversion des variables catégorielles en variables numériques avec le codage à chaud (one-hot encoding)
 encoder = OneHotEncoder(drop='first')  # drop='first' pour éviter la multi-collinéarité
-categorical_features = ['Revenu_Annuel', 'Age']
+categorical_features = ['Revenu_Annuel', 'Age','type_de_produit_prefere']
 
 encoded_features = encoder.fit_transform(data[categorical_features]).toarray()
 
@@ -23,28 +23,24 @@ data = pd.concat([data, encoded_df], axis=1)
 data = data.drop(columns=categorical_features)  # Suppression des colonnes catégorielles originales
 
 # Séparation des caractéristiques (features) et de la variable cible (target)
-X = data.drop(columns='charges')
-y = data['charges']
+X = data.drop(columns='')
+y = data['']
 
 # Division des données en ensembles d'entraînement et de test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.01, random_state=42)
 
 # Normalisation des données pour améliorer la performance de la régression linéaire
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Réduction de dimensionnalité avec PCA
-pca = PCA(n_components=2)
-X_train_pca = pca.fit_transform(X_train)
-X_test_pca = pca.transform(X_test)
 
 # 3. Entraînement du modèle de régression linéaire
 model = LinearRegression()
 model.fit(X_train, y_train)
 
 # 4. Prédiction et évaluation du modèle
-y_pred = model.predict(X_test_pca)
+y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 print(f"Erreur quadratique moyenne (MSE) : {mse}")
 

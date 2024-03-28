@@ -5,20 +5,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Chargement du fichier CSV pour voir son contenu
-df = pd.read_csv('./dataset_marketing_grand.csv')
+df = pd.read_csv('./marketing_sales_data.csv')
 
-#Conserver uniquement les lignes correspondants au type de produit beauté
-df_beaute = df.loc[df['Type de Produit'] == 'Beauté']
+# Échantillonnage aléatoire pour conserver 50% des données
+df_sampled = df.sample(frac=1)
 
-# Échantillonnage aléatoire pour conserver 10% des données
-df_sampled = df_beaute.sample(frac=0.1)
-
-# Affichage du nombre de données échantillonnées
-print("Nombre de données échantillonnées :", df_sampled.shape[0])
 
 # Sélection des variables explicatives (features) et de la variable cible (target)
-X = df_sampled[['Ventes']]  # Variable explicative : 'vente'
-y = df_sampled['Budget Radio']  # Variable cible : 'budget'
+X = df_sampled[['Sales']]  # Variable explicative : 'vente'
+y = df_sampled['Radio']  # Variable cible : 'Radio'
 
 # Division des données en un ensemble d'entraînement et un ensemble de test
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
@@ -35,11 +30,8 @@ y_pred = model.predict(X_test)
 # Calcul de l'erreur quadratique moyenne (MSE) et du coefficient de détermination (R^2)
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
-
 (mse, r2)
-
-print("Pourcentage de croissance :", r2*100, "%")
-
+print(r2)
 # Tracé des points de données
 plt.scatter(X_test, y_test, color='black', label='Données réelles')
 
@@ -48,6 +40,6 @@ plt.plot(X_test, y_pred, color='blue', linewidth=3, label='Ligne de régression'
 
 plt.xlabel('Ventes')
 plt.ylabel('Budget Radio')
-plt.title('Régression Linéaire Simple - Ventes des produits de Beauté en fonction du Budget Radio')
+plt.title('Régression Linéaire Simple - Ventes des Total en fonction du Budget')
 plt.legend()
 plt.show()
